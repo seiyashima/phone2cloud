@@ -1,0 +1,24 @@
+{
+  "name": "phone2cloud",
+  "version": "1.0.0",
+  "description": "This package has been made with npm and cdk to remotely operate from Raspberry via Phone such as iPhone.",
+  "main": "phone2cloud.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seiyashima/phone2cloud.git"
+  },
+  "keywords": [
+    "raspberry",
+    "cdk",
+    "typescript"
+  ],
+  "author": "shIbaInu42 (Seiya SHIMABUKURO)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/seiyashima/phone2cloud/issues"
+  },
+  "homepage": "https://github.com/seiyashima/phone2cloud#readme"
+}
