@@ -1,0 +1,9 @@
+pi@raspberrypi:~/Documents/dev/phone2cloud/cdkContainer $ sudo ./aws/install
+./aws/install: 78: ./aws/install: /home/pi/Documents/dev/phone2cloud/cdkContainer/aws/dist/aws: Exec format error
+You can now run: /usr/local/bin/aws --version
+pi@raspberrypi:~/Documents/dev/phone2cloud/cdkContainer $ aws --version
+bash: /usr/local/bin/aws: cannot execute binary file: Exec format error
+
+
+
+Linux raspberrypi 4.19.97-v7+ #1294 SMP Thu Jan 30 13:15:58 GMT 2020 armv7l GNU/Linux
