@@ -1,0 +1,308 @@
+Resources:
+  myVpc3CC7CF9E:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      InstanceTenancy: default
+      Tags:
+        - Key: Name
+          Value: CdkContainerStack/myVpc
+    Metadata:
+      aws:cdk:path: CdkContainerStack/myVpc/Resource
+  myVpcPublicSubnet1Subnet0D439C92:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.0.0/17
+      VpcId:
+        Ref: myVpc3CC7CF9E
+      AvailabilityZone:
+        Fn::Select:
+          - 0
+          - Fn::GetAZs: ""
+      MapPublicIpOnLaunch: true
+      Tags:
+        - Key: Name
+          Value: CdkContainerStack/myVpc/PublicSubnet1
+        - Key: aws-cdk:subnet-name
+          Value: Public
+        - Key: aws-cdk:subnet-type
+          Value: Public
+    Metadata:
+      aws:cdk:path: CdkContainerStack/myVpc/PublicSubnet1/Subnet
+  myVpcPublicSubnet1RouteTable347B4FC5:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: myVpc3CC7CF9E
+      Tags:
+        - Key: Name
+          Value: CdkContainerStack/myVpc/PublicSubnet1
+    Metadata:
+      aws:cdk:path: CdkContainerStack/myVpc/PublicSubnet1/RouteTable
+  myVpcPublicSubnet1RouteTableAssociationE92D83F6:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: myVpcPublicSubnet1RouteTable347B4FC5
+      SubnetId:
+        Ref: myVpcPublicSubnet1Subnet0D439C92
+    Metadata:
+      aws:cdk:path: CdkContainerStack/myVpc/PublicSubnet1/RouteTableAssociation
+  myVpcPublicSubnet1DefaultRoute8F50EF0F:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId:
+        Ref: myVpcPublicSubnet1RouteTable347B4FC5
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId:
+        Ref: myVpcIGW1F8FFE4F
+    DependsOn:
+      - myVpcVPCGWDA12C916
+    Metadata:
+      aws:cdk:path: CdkContainerStack/myVpc/PublicSubnet1/DefaultRoute
+  myVpcPublicSubnet1EIPF5A3DBC1:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+      Tags:
+        - Key: Name
+          Value: CdkContainerStack/myVpc/PublicSubnet1
+    Metadata:
+      aws:cdk:path: CdkContainerStack/myVpc/PublicSubnet1/EIP
+  myVpcPublicSubnet1NATGatewayD6B589D4:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId:
+        Fn::GetAtt:
+          - myVpcPublicSubnet1EIPF5A3DBC1
+          - AllocationId
+      SubnetId:
+        Ref: myVpcPublicSubnet1Subnet0D439C92
+      Tags:
+        - Key: Name
+          Value: CdkContainerStack/myVpc/PublicSubnet1
+    Metadata:
+      aws:cdk:path: CdkContainerStack/myVpc/PublicSubnet1/NATGateway
+  myVpcPrivateSubnet1SubnetDE1978C0:
+    Type: AWS::EC2::Subnet
+    Properties:
+      CidrBlock: 10.0.128.0/17
+      VpcId:
+        Ref: myVpc3CC7CF9E
+      AvailabilityZone:
+        Fn::Select:
+          - 0
+          - Fn::GetAZs: ""
+      MapPublicIpOnLaunch: false
+      Tags:
+        - Key: Name
+          Value: CdkContainerStack/myVpc/PrivateSubnet1
+        - Key: aws-cdk:subnet-name
+          Value: Private
+        - Key: aws-cdk:subnet-type
+          Value: Private
+    Metadata:
+      aws:cdk:path: CdkContainerStack/myVpc/PrivateSubnet1/Subnet
+  myVpcPrivateSubnet1RouteTableD8D3BB9F:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: myVpc3CC7CF9E
+      Tags:
+        - Key: Name
+          Value: CdkContainerStack/myVpc/PrivateSubnet1
+    Metadata:
+      aws:cdk:path: CdkContainerStack/myVpc/PrivateSubnet1/RouteTable
+  myVpcPrivateSubnet1RouteTableAssociationE1CC0616:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId:
+        Ref: myVpcPrivateSubnet1RouteTableD8D3BB9F
+      SubnetId:
+        Ref: myVpcPrivateSubnet1SubnetDE1978C0
+    Metadata:
+      aws:cdk:path: CdkContainerStack/myVpc/PrivateSubnet1/RouteTableAssociation
+  myVpcPrivateSubnet1DefaultRouteFB1EB490:
+    Type: AWS::EC2::Route
+    Properties:
+      RouteTableId:
+        Ref: myVpcPrivateSubnet1RouteTableD8D3BB9F
+      DestinationCidrBlock: 0.0.0.0/0
+      NatGatewayId:
+        Ref: myVpcPublicSubnet1NATGatewayD6B589D4
+    Metadata:
+      aws:cdk:path: CdkContainerStack/myVpc/PrivateSubnet1/DefaultRoute
+  myVpcIGW1F8FFE4F:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: CdkContainerStack/myVpc
+    Metadata:
+      aws:cdk:path: CdkContainerStack/myVpc/IGW
+  myVpcVPCGWDA12C916:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId:
+        Ref: myVpc3CC7CF9E
+      InternetGatewayId:
+        Ref: myVpcIGW1F8FFE4F
+    Metadata:
+      aws:cdk:path: CdkContainerStack/myVpc/VPCGW
+  myAsgInstanceSecurityGroup93D354CF:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: CdkContainerStack/myAsg/InstanceSecurityGroup
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          Description: Allow all outbound traffic by default
+          IpProtocol: "-1"
+      Tags:
+        - Key: Name
+          Value: CdkContainerStack/myAsg
+      VpcId:
+        Ref: myVpc3CC7CF9E
+    Metadata:
+      aws:cdk:path: CdkContainerStack/myAsg/InstanceSecurityGroup/Resource
+  myAsgInstanceRole5034186B:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service:
+                Fn::Join:
+                  - ""
+                  - - ec2.
+                    - Ref: AWS::URLSuffix
+        Version: "2012-10-17"
+      Tags:
+        - Key: Name
+          Value: CdkContainerStack/myAsg
+    Metadata:
+      aws:cdk:path: CdkContainerStack/myAsg/InstanceRole/Resource
+  myAsgInstanceProfile8D3C074D:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Roles:
+        - Ref: myAsgInstanceRole5034186B
+    Metadata:
+      aws:cdk:path: CdkContainerStack/myAsg/InstanceProfile
+  myAsgLaunchConfigFC474F91:
+    Type: AWS::AutoScaling::LaunchConfiguration
+    Properties:
+      ImageId:
+        Ref: SsmParameterValueawsserviceecsoptimizedamiamazonlinux2recommendedimageidC96584B6F00A464EAD1953AFF4B05118Parameter
+      InstanceType: t2.medium
+      IamInstanceProfile:
+        Ref: myAsgInstanceProfile8D3C074D
+      SecurityGroups:
+        - Fn::GetAtt:
+            - myAsgInstanceSecurityGroup93D354CF
+            - GroupId
+      UserData:
+        Fn::Base64: "#!/bin/bash"
+    DependsOn:
+      - myAsgInstanceRole5034186B
+    Metadata:
+      aws:cdk:path: CdkContainerStack/myAsg/LaunchConfig
+  myAsgASG4481ABF3:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      MaxSize: "2"
+      MinSize: "1"
+      DesiredCapacity: "2"
+      LaunchConfigurationName:
+        Ref: myAsgLaunchConfigFC474F91
+      Tags:
+        - Key: Name
+          PropagateAtLaunch: true
+          Value: CdkContainerStack/myAsg
+      VPCZoneIdentifier:
+        - Ref: myVpcPrivateSubnet1SubnetDE1978C0
+    UpdatePolicy:
+      AutoScalingReplacingUpdate:
+        WillReplace: true
+      AutoScalingScheduledAction:
+        IgnoreUnmodifiedGroupSizeProperties: true
+    Metadata:
+      aws:cdk:path: CdkContainerStack/myAsg/ASG
+  CDKMetadata:
+    Type: AWS::CDK::Metadata
+    Properties:
+      Modules: aws-cdk=1.31.0,@aws-cdk/assets=1.31.0,@aws-cdk/aws-applicationautoscaling=1.31.0,@aws-cdk/aws-autoscaling=1.31.0,@aws-cdk/aws-autoscaling-common=1.31.0,@aws-cdk/aws-autoscaling-hooktargets=1.31.0,@aws-cdk/aws-cloudwatch=1.31.0,@aws-cdk/aws-ec2=1.31.0,@aws-cdk/aws-ecr=1.31.0,@aws-cdk/aws-ecr-assets=1.31.0,@aws-cdk/aws-ecs=1.31.0,@aws-cdk/aws-elasticloadbalancingv2=1.31.0,@aws-cdk/aws-events=1.31.0,@aws-cdk/aws-iam=1.31.0,@aws-cdk/aws-kms=1.31.0,@aws-cdk/aws-lambda=1.31.0,@aws-cdk/aws-logs=1.31.0,@aws-cdk/aws-s3=1.31.0,@aws-cdk/aws-s3-assets=1.31.0,@aws-cdk/aws-servicediscovery=1.31.0,@aws-cdk/aws-sns=1.31.0,@aws-cdk/aws-sns-subscriptions=1.31.0,@aws-cdk/aws-sqs=1.31.0,@aws-cdk/aws-ssm=1.31.0,@aws-cdk/core=1.31.0,@aws-cdk/cx-api=1.31.0,@aws-cdk/region-info=1.31.0,jsii-runtime=node.js/v12.16.1
+    Condition: CDKMetadataAvailable
+Parameters:
+  SsmParameterValueawsserviceecsoptimizedamiamazonlinux2recommendedimageidC96584B6F00A464EAD1953AFF4B05118Parameter:
+    Type: AWS::SSM::Parameter::Value<AWS::EC2::Image::Id>
+    Default: /aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id
+Conditions:
+  CDKMetadataAvailable:
+    Fn::Or:
+      - Fn::Or:
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-east-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-northeast-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-northeast-2
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-south-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-southeast-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ap-southeast-2
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - ca-central-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - cn-north-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - cn-northwest-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - eu-central-1
+      - Fn::Or:
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - eu-north-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - eu-west-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - eu-west-2
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - eu-west-3
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - me-south-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - sa-east-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - us-east-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - us-east-2
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - us-west-1
+          - Fn::Equals:
+              - Ref: AWS::Region
+              - us-west-2
+
